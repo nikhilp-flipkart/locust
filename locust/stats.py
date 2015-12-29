@@ -337,7 +337,7 @@ class StatsEntry(object):
             if((self.num_requests - processed_count) <= num_of_request):
                 return response_time
 
-    def percentile(self, tpl=" %-" + str(STATS_NAME_WIDTH) + "s %8d %6d %6d %6d %6d %6d %6d %6d %6d %6d"):
+    def percentile(self, tpl=" %-" + str(STATS_NAME_WIDTH) + "s %8d %6d %6d %6d %6d %6d %6d %6d %6d %6d %6d %6d"):
         if not self.num_requests:
             raise ValueError("Can't calculate percentile on url with no successful requests")
         
@@ -352,6 +352,8 @@ class StatsEntry(object):
             self.get_response_time_percentile(0.95),
             self.get_response_time_percentile(0.98),
             self.get_response_time_percentile(0.99),
+            self.get_response_time_percentile(0.995),
+            self.get_response_time_percentile(0.999),
             self.max_response_time
         )
 
@@ -472,7 +474,7 @@ def print_stats(stats):
 
 def print_percentile_stats(stats):
     console_logger.info("Percentage of the requests completed within given times")
-    console_logger.info((" %-" + str(STATS_NAME_WIDTH) + "s %8s %6s %6s %6s %6s %6s %6s %6s %6s %6s") % ('Name', '# reqs', '50%', '66%', '75%', '80%', '90%', '95%', '98%', '99%', '100%'))
+    console_logger.info((" %-" + str(STATS_NAME_WIDTH) + "s %8s %6s %6s %6s %6s %6s %6s %6s %6s %6s %6s %6s") % ('Name', '# reqs', '50%', '66%', '75%', '80%', '90%', '95%', '98%', '99%', '99.5%', '99.9%' '100%'))
     console_logger.info("-" * (80 + STATS_NAME_WIDTH))
     for key in sorted(stats.iterkeys()):
         r = stats[key]

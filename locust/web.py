@@ -117,13 +117,15 @@ def distribution_stats_csv():
         '"95%"',
         '"98%"',
         '"99%"',
+        '"99.5%"',
+        '"99.9%"',
         '"100%"',
     ))]
     for s in chain(_sort_stats(runners.locust_runner.request_stats), [runners.locust_runner.stats.aggregated_stats("Total", full_request_history=True)]):
         if s.num_requests:
-            rows.append(s.percentile(tpl='"%s",%i,%i,%i,%i,%i,%i,%i,%i,%i,%i'))
+            rows.append(s.percentile(tpl='"%s",%i,%i,%i,%i,%i,%i,%i,%i,%i,%i,%i,%i'))
         else:
-            rows.append('"%s",0,"N/A","N/A","N/A","N/A","N/A","N/A","N/A","N/A","N/A"' % s.name)
+            rows.append('"%s",0,"N/A","N/A","N/A","N/A","N/A","N/A","N/A","N/A","N/A","N/A","N/A"' % s.name)
 
     response = make_response("\n".join(rows))
     file_name = "distribution_{0}.csv".format(time())
