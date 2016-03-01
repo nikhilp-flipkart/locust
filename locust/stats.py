@@ -510,8 +510,13 @@ def print_percentile_stats(stats):
 def get_percentile_stats(stats):
     api_percentile_stats = {}
     for api_name in sorted(stats.iterkeys()):
+        api_name = format_api_name(api_name)
         api_percentile_stats[api_name] = get_percentile_stats_for_api(stats[api_name])
     return api_percentile_stats
+
+
+def format_api_name(api_name):
+    return api_name[1] + ":" + api_name[0]
 
 
 def get_percentile_stats_for_api(api_stat):
