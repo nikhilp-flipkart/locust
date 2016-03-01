@@ -3,7 +3,7 @@
 from setuptools import setup, find_packages, Command
 import sys, os
 
-version = '0.7.3.patched'
+version = '0.7.3.2.patched'
 
 
 class Unit2Discover(Command):
@@ -26,7 +26,8 @@ setup(
     name='locustio',
     version=version,
     description="Website load testing framework",
-    long_description="""Locust is a python utility for doing easy, distributed load testing of a web site""",
+    long_description="""Locust is a python utility for doing easy, distributed load testing of a web site \n CHANGES:
+    Added methods in stats.py to return API wise percentile stats as a dict""",
     classifiers=[
         "Topic :: Software Development :: Testing :: Traffic Generation",
         "Development Status :: 4 - Beta",
