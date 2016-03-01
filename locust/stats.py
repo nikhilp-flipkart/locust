@@ -516,7 +516,7 @@ def get_percentile_stats(stats):
 
 
 def format_api_name(api_name):
-    return api_name[1] + ":" + api_name[0]
+    return api_name[1] + "=" + api_name[0]
 
 
 def get_percentile_stats_for_api(api_stat):
