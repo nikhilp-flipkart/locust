@@ -510,8 +510,8 @@ def print_percentile_stats(stats):
 def get_percentile_stats(stats):
     api_percentile_stats = {}
     for api_name in sorted(stats.iterkeys()):
-        api_name = format_api_name(api_name)
-        api_percentile_stats[api_name] = get_percentile_stats_for_api(stats[api_name])
+        formatted_api_name = format_api_name(api_name)
+        api_percentile_stats[formatted_api_name] = get_percentile_stats_for_api(stats[api_name])
     return api_percentile_stats
 
 
@@ -532,7 +532,9 @@ def to_percent(str):
 
 def get_final_stats_after_shutdown():
     from runners import locust_runner
-    ret = get_percentile_stats(locust_runner.request_stats)
+    import os
+    pkg_version = os.getenv('PKG_VERSION', 'PKG_VERSION_ENV_NOT_FOUND')
+    ret = {pkg_version: get_percentile_stats(locust_runner.request_stats)}
     console_logger.info("== percentile_stats = {0}".format(ret))
     return ret
 
