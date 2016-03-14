@@ -9,6 +9,7 @@ from log import console_logger
 STATS_NAME_WIDTH = 60
 PERCENTILES = ["50", "66", "75", "80", "90", "95", "98", "99", "100"]
 
+
 class RequestStatsAdditionError(Exception):
     pass
 
@@ -489,12 +490,9 @@ def print_stats(stats):
 
 
 def print_percentile_stats(stats):
-
     console_logger.info("Percentage of the requests completed within given times")
-    console_logger.info((" %-" + str(STATS_NAME_WIDTH) + "s %8s %6s %6s %6s %6s %6s %6s %6s %6s %6s %6s %6s") % (
-        'Name', '# reqs', '50%', '66%', '75%', '80%', '90%', '95%', '98%', '99%', '99.5%', '99.9%' '100%'))
+    console_logger.info((" %-" + str(STATS_NAME_WIDTH) + "s %8s %6s %6s %6s %6s %6s %6s %6s %6s %6s") % ('Name', '# reqs', '50%', '66%', '75%', '80%', '90%', '95%', '98%', '99%', '100%'))
     console_logger.info("-" * (80 + STATS_NAME_WIDTH))
-
     for key in sorted(stats.iterkeys()):
         r = stats[key]
         if r.response_times:
@@ -507,16 +505,20 @@ def print_percentile_stats(stats):
     console_logger.info("")
 
 
-def get_percentile_stats(stats):
-    api_percentile_stats = {}
+def get_all_stats(stats):
+    api_stats = {}
     for api_name in sorted(stats.iterkeys()):
         formatted_api_name = format_api_name(api_name)
-        api_percentile_stats[formatted_api_name] = get_percentile_stats_for_api(stats[api_name])
-    return api_percentile_stats
+        api_stats[formatted_api_name] = get_all_stats_for_api(stats[api_name])
+    return api_stats
 
 
 def format_api_name(api_name):
     return api_name[1] + "=" + api_name[0]
+
+
+def get_all_stats_for_api(api_stat):
+    return {'percentiles': get_percentile_stats_for_api(api_stat), 'counts': get_count_stats_for_api(api_stat)}
 
 
 def get_percentile_stats_for_api(api_stat):
@@ -526,15 +528,21 @@ def get_percentile_stats_for_api(api_stat):
     return percentile_stat
 
 
+def get_count_stats_for_api(api_stat):
+    count_stat = {'requests_per_second': api_stat.current_rps, 'requests_success': api_stat.num_requests,
+                  'requests_failure': api_stat.num_failures}
+    return count_stat
+
+
 def to_percent(str):
-    return float(str)*0.01
+    return float(str) * 0.01
 
 
 def get_final_stats_after_shutdown():
     from runners import locust_runner
     import os
     pkg_version = os.getenv('PKG_VERSION', 'PKG_VERSION_ENV_NOT_FOUND')
-    ret = {pkg_version: get_percentile_stats(locust_runner.request_stats)}
+    ret = {pkg_version: get_all_stats(locust_runner.request_stats)}
     console_logger.info("== percentile_stats = {0}".format(ret))
     return ret
 
@@ -556,4 +564,3 @@ def stats_printer():
     while True:
         print_stats(locust_runner.request_stats)
         gevent.sleep(2)
-
